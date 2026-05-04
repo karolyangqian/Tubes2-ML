@@ -3,39 +3,38 @@ import os
 
 import tensorflow as tf
 from tensorflow import keras
-from tensorflow.keras import layers
 from scratchlayers import Conv2DScratch, SimpleRNNScratch, LSTMScratch
 
-def create_cnn():
+def create_cnn_keras():
     model = keras.Sequential([
-        layers.InputLayer(input_shape=(28, 28, 1)),
-        Conv2DScratch(filters=32, kernel_size=(3, 3), activation='relu'),
-        layers.MaxPooling2D(pool_size=(2, 2)),
-        layers.Flatten(),
-        layers.Dense(10, activation='softmax')
+        keras.layers.InputLayer(input_shape=(28, 28, 1)),
+        keras.layers.Conv2D(32, kernel_size=(3, 3), activation='relu'),
+        keras.layers.MaxPooling2D(pool_size=(2, 2)),
+        keras.layers.Flatten(),
+        keras.layers.Dense(10, activation='softmax')
     ])
     return model
 
 def create_rnn():
     model = keras.Sequential([
-        layers.InputLayer(input_shape=(100, 50)),
-        SimpleRNNScratch(units=64, activation='relu'),
-        layers.Dense(10, activation='softmax')
+        keras.layers.InputLayer(input_shape=(100, 50)),
+        keras.layers.SimpleRNN(64, activation='relu'),
+        keras.layers.Dense(10, activation='softmax')
     ])
     return model
 
 def create_lstm():
     model = keras.Sequential([
-        layers.InputLayer(input_shape=(100, 50)),
-        LSTMScratch(units=64, activation='relu'),
-        layers.Dense(10, activation='softmax')
+        keras.layers.InputLayer(input_shape=(100, 50)),
+        keras.layers.LSTM(64, activation='relu'),
+        keras.layers.Dense(10, activation='softmax')
     ])
     return model
     
 
 # Compile dan display model
 if __name__ == "__main__":
-    model = create_cnn()
+    model = create_cnn_keras()
     
     model.compile(
         optimizer='adam',
