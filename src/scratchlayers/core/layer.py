@@ -9,12 +9,16 @@ class Layer(ABC):
         self.output_shape: Optional[tuple[int, ...]] = None
 
     @abstractmethod
-    def build(self, input_shape: Optional[tuple[int, ...]]):
-        pass
+    def build(self, input_shape: Optional[tuple[int, ...]]) -> None:
+        raise NotImplementedError("`build()` method not implemented yet")
 
     @abstractmethod
     def forward(self, x: np.ndarray[Any, Any]) -> np.ndarray[Any, Any]:
-        pass
+        raise NotImplementedError("`forward()` method not implemented yet")
+    
+    @abstractmethod
+    def get_output_shape(self) -> Optional[tuple[int, ...]]:
+        raise NotImplementedError("`get_output_shape()` method not implemented yet")
     
     def add_weight(self, shape: tuple[int, ...], initializer: Optional[str] = None) -> np.ndarray[Any, Any]:
         if initializer == 'zeros':
@@ -26,6 +30,4 @@ class Layer(ABC):
         else:
             return np.random.rand(*shape)
         
-    def get_output_shape(self) -> Optional[tuple[int, ...]]:
-        return self.output_shape
 
