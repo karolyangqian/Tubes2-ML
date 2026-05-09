@@ -11,7 +11,7 @@ class Sequential(Model):
     def build(self, input_shape: Optional[tuple[int, ...]]):
         for layer in self.layers:
             layer.build(input_shape)
-            input_shape = layer.output_shape
+            input_shape = layer.get_output_shape()
             
     def forward(self, x: np.ndarray[Any, Any]) -> np.ndarray[Any, Any]:
         for layer in self.layers:
