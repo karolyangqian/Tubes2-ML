@@ -2,6 +2,9 @@ import numpy as np
 from typing import Any
 from abc import ABC, abstractmethod
 from typing import Optional
+from scratchlayers.core.activation import Activation, ReLU, Sigmoid, Linear, Tanh, Softmax
+
+from scratchlayers.core.activation import Activation
 
 class Layer(ABC):
     def __init__(self):
@@ -29,5 +32,19 @@ class Layer(ABC):
             return np.random.rand(*shape)
         else:
             return np.random.rand(*shape)
+    
+    def _activation(self, activation_name: str) -> Activation:
+        if activation_name == "relu":
+            return ReLU()
+        elif activation_name == "sigmoid":
+            return Sigmoid()
+        elif activation_name == "linear":
+            return Linear()
+        elif activation_name == "tanh":
+            return Tanh()
+        elif activation_name == "softmax":
+            return Softmax()
+        else:
+            raise ValueError(f"Unsupported activation function: {activation_name}")
         
 

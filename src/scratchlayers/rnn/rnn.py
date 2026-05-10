@@ -1,7 +1,7 @@
 from typing import Any, Optional
 
 from scratchlayers.core.layer import Layer
-from scratchlayers.core.activation import Activation, ReLU, Sigmoid, Linear, Tanh, Softmax
+from scratchlayers.core.activation import Activation
 import numpy as np
 
 class SimpleRNNScratch(Layer):
@@ -14,12 +14,17 @@ class SimpleRNNScratch(Layer):
         self.recurrent_weights: Optional[np.ndarray[Any, Any]] = None
         self.output_shape: Optional[tuple[int, ...]] = None
         
+        self.inputs: Optional[np.ndarray] = None
+        self.outputs: Optional[np.ndarray] = None
+        
         self.activation_name = activation
         self.activation: Optional[Activation] = None
         
     def build(self, input_shape: Optional[tuple[int, ...]]):
-        self. input_shape = input_shape
+        self.input_shape = input_shape
         
+        if input_shape is None or len(input_shape) != 3:
+            raise ValueError(f"SimpleRNN requires a 3D input shape (batch_size, timesteps, features), got: {input_shape}")
         if self.input_weights is None:
             raise ValueError("Input weights not set")
         if self.input_bias is None:
@@ -27,20 +32,14 @@ class SimpleRNNScratch(Layer):
         if self.recurrent_weights is None:
             raise ValueError("Recurrent weights not set")
         
-        self.activation = self._activation()
+        self.activation = self._activation(self.activation_name)
         
-        if input_shape is not None:
-            if self.return_sequences and len(input_shape) == 3:
-                batch_size, timesteps, _ = input_shape
-                self.output_shape = (batch_size, timesteps, self.n_neurons)
-            elif not self.return_sequences and len(input_shape) == 3:
-                batch_size, _, _ = input_shape
-                self.output_shape = (batch_size, self.n_neurons)
-            elif not self.return_sequences and len(input_shape) == 2:
-                batch_size, _ = input_shape
-                self.output_shape = (batch_size, self.n_neurons)
-            else:
-                raise ValueError("Invalid input shape for RNN layer")  
+        if self.return_sequences:
+            batch_size, timesteps, _ = input_shape
+            self.output_shape = (batch_size, timesteps, self.n_neurons)
+        else:
+            batch_size, _, _ = input_shape
+            self.output_shape = (batch_size, self.n_neurons)
     
     def forward(self, x: np.ndarray[Any, Any]) -> np.ndarray[Any, Any]:
         if self.activation is None:
@@ -52,6 +51,7 @@ class SimpleRNNScratch(Layer):
         if self.recurrent_weights is None:
             raise ValueError("Recurrent weights not set.")
         
+        self.inputs = x
         
         batch_size, timesteps, _ = x.shape
         
@@ -70,6 +70,7 @@ class SimpleRNNScratch(Layer):
             if self.return_sequences:
                 outputs[:, t, :] = h_t
         
+        self.outputs = outputs if self.return_sequences else h_t
         if self.return_sequences:
             return outputs
         
@@ -80,17 +81,3 @@ class SimpleRNNScratch(Layer):
             raise ValueError("Output shape not set. Call `build()` method first.")
         return self.output_shape 
     
-    def _activation(self) -> Activation:
-        if self.activation_name == "relu":
-            return ReLU()
-        elif self.activation_name == "sigmoid":
-            return Sigmoid()
-        elif self.activation_name == "linear":
-            return Linear()
-        elif self.activation_name == "tanh":
-            return Tanh()
-        elif self.activation_name == "softmax":
-            return Softmax()
-        else:
-            raise ValueError(f"Unsupported activation function: {self.activation_name}")
-        
