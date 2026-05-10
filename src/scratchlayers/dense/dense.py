@@ -41,15 +41,15 @@ class Dense(Layer):
         batch_size, _ = input_shape
         self.output_shape = (batch_size, self.n_neurons)
 
-    def forward(self, inputs: np.ndarray) -> np.ndarray:
+    def forward(self, x: np.ndarray) -> np.ndarray:
         if self.weights is None or self.biases is None:
             raise ValueError("Layer weights and biases must be initialized before forward pass.")
         
         if self.activation is None:
             raise ValueError("Activation function must be initialized before forward pass.")
         
-        self.inputs = inputs
-        z = np.dot(inputs, self.weights) + self.biases
+        self.inputs = x
+        z = np.dot(x, self.weights) + self.biases
         self.outputs = self.activation.forward(z)
         return self.outputs
 
