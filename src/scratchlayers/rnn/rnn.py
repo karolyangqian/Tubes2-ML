@@ -40,10 +40,40 @@ class SimpleRNNScratch(Layer):
                 batch_size, _ = input_shape
                 self.output_shape = (batch_size, self.n_neurons)
             else:
-                raise ValueError("Invalid input shape for LSTM layer")  
+                raise ValueError("Invalid input shape for RNN layer")  
     
     def forward(self, x: np.ndarray[Any, Any]) -> np.ndarray[Any, Any]:
-        raise NotImplementedError("Forward pass not implemented yet")
+        if self.activation is None:
+            raise ValueError("Activation function not set. Call `build()` method first.")
+        if self.input_weights is None:
+            raise ValueError("Input weights not set.")
+        if self.input_bias is None:
+            raise ValueError("Input bias not set.")
+        if self.recurrent_weights is None:
+            raise ValueError("Recurrent weights not set.")
+        
+        
+        batch_size, timesteps, _ = x.shape
+        
+        h_t = np.zeros((batch_size, self.n_neurons))
+        
+        if self.return_sequences:
+            outputs = np.zeros((batch_size, timesteps, self.n_neurons))
+            
+        for t in range(timesteps):
+            x_t = x[:, t, :]
+            h_t = self.activation.forward(
+                np.dot(x_t, self.input_weights) + 
+                np.dot(h_t, self.recurrent_weights) + 
+                self.input_bias
+            )
+            if self.return_sequences:
+                outputs[:, t, :] = h_t
+        
+        if self.return_sequences:
+            return outputs
+        
+        return h_t
     
     def get_output_shape(self) -> tuple[int, ...]:
         if self.output_shape is None:
