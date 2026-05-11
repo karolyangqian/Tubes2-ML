@@ -4,8 +4,6 @@ from abc import ABC, abstractmethod
 from typing import Optional
 from scratchlayers.core.activation import Activation, ReLU, Sigmoid, Linear, Tanh, Softmax
 
-from scratchlayers.core.activation import Activation
-
 class Layer(ABC):
     def __init__(self):
         self.input_shape: Optional[tuple[int, ...]] = None
