@@ -1,7 +1,4 @@
 from typing import Any, Optional
-
-from prometheus_client import h
-
 from scratchlayers.core.layer import Layer
 import numpy as np
 
