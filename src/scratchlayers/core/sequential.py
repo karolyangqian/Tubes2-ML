@@ -17,4 +17,9 @@ class Sequential(Model):
         for layer in self.layers:
             x = layer.forward(x)
         return x
+        
+    def get_output_shape(self) -> Optional[tuple[int, ...]]:
+        if not self.layers:
+            return None
+        return self.layers[-1].get_output_shape()
     
