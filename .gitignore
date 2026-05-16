@@ -4,5 +4,10 @@ __pycache__/
 *.so
 .Python
 
+.venv
+src/notebook/data
+src/notebook/features
+src/notebook/data
+src/notebook/vocabulary
 
 dataset
